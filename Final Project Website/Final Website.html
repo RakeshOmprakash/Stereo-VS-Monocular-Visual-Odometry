@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en"><head>  
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Computer Vision Course Project
+  | ECE, Virginia Tech | Fall 2023: ECE 4554/5554</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+<!-- Le styles -->  
+  <link href="css/bootstrap.css" rel="stylesheet">
+<style>
+body {
+padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+.vis {
+color: #3366CC;
+}
+.data {
+color: #FF9900;
+}
+</style>
+  
+<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements --><!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<body>
+<div class="container">
+<div class="page-header">
+
+<!-- Title and Name --> 
+<h1>Visual Odometry: Stereo Camera VS Monocular Camera and compared with Deep Learning Model</h1> 
+<span style="font-size: 20px; line-height: 1.5em;"><strong>Rutvik Dagadkhair, Rakesh Omprakash</strong></span><br>
+<span style="font-size: 18px; line-height: 1.5em;">Fall 2023 ECE 4554/5554 Computer Vision: Course Project</span><br>
+<span style="font-size: 18px; line-height: 1.5em;">Virginia Tech</span>
+<hr>
+
+
+<!-- Goal -->
+<h3>Abstract</h3>
+
+Visual odometry gives accurate information where conventional sensors like wheel odometer and inertial sensors like gyroscopes and accelerometers give inaccurate information. Visual odometry finds the vehicle motion from a sequence of camera images taken from an onboard camera. Visual Odometry during autonomous driving can be achieved using Stereo And Monocular Camera. The objective of this project is to compare the results of the two types of cameras and also compare it with a Deep Learning Model. In this project visual odometry has been performed by the following methods such as Monocular Visual Odometry using Feature tracking and Optical flow, Stereo Visual Odometry using Feature Tracking and Optical flow and comparison with Monocular Visual Odometry using Deep Learning. The results of the mentioned methods are plotted on a graph where the ground truth pose values from the KITTI dataset is plotted against the estimated pose from each method.
+
+<br><br>
+<!-- figure -->
+<h3>Teaser figure</h3>
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Teaser figure 1.jpeg">
+</div>
+
+<center><b>Monocular Visual Odometry using Optical Flow</b></center>
+<br><br>
+
+<div style="text-align: center;">
+<img style="height: 500px;" alt="" src="Teaser figure 2.png">
+</div>
+<center><b>Stereo Visual Odometry using Optical Flow</b></center>
+<div style="text-align: center;">
+<img style="height: 300px;" alt="" src="Teaser figure 3.jpeg">
+</div>
+<center><b>Monocular Visual Odometry using Deep Learning</b></center>
+<br><br>
+
+<br><br>
+<!-- Introduction -->
+<h3>Introduction</h3>
+An important feature for autonomous robot mobility is localization. Visual odometry(VO) is very popular for robot localisation in which ego-motion is calculated with only cameras. And cameras use lesser energy than sonar or laser range-finder. As the usage of energy it benefits the execution of the purpose of the robot by extending the time duration of deployments etc. Popular ways of performing visual odometry are using Monocular camera and Stereo camera. 
+<br><br>
+
+In Monocular Visual Odometry a single camera is used to capture motion. During Monocular VO when estimating the motion the pose of every tracked feature points is calculated using a five-point pose algorithm. Then the 3d position of every detected feature is estimated with the first and last acquired images. The 3d point information is used for the calculation of the 3d pose of the camera.
+<br><br>
+
+In Stereo VO a calibrated stereo camera pair is used. During Stereo VO corresponding feature points of the image pairs are found and world 3d points of those feature points are calculated using triangulation. Then, the pose of the camera is found using the 3d points. Some challenges with stereo visual odometry are it is computationally expensive, time consuming and if the texture is repetitive and of high frequency there will be ambiguity in best match determination.
+
+<!-- Main Illustrative Figure --> 
+<div style="text-align: center;">
+<img style="height: 200px;" alt="" src="Camera.webp">
+
+</div>
+<center><b>a.Stereo Camera(VOLTRIUM) b.Stereo omnidirectional(Occam) c.Monocular Camera(Microsoft) d.Monocular omnidirectional(Occam)</b></center>
+
+<br><br>
+<!-- Approach -->
+<h3>Approach</h3>
+
+<h4>Monocular Vision Odometry using Optical Flow</h4>
+<br><br>
+
+<div style="text-align: center;">
+<img style="height: 500px;" alt="" src="Flow of Monocular OF.png">
+</div>
+<center><b>Methodology of Monocular Vision Odometry using Optical Flow</b></center>
+<div style="text-align: center;">
+<img style="height: 400px;" alt="" src="1.jpeg">
+</div>
+
+<center><b>Output graph of motion estimation - green line indicates ground truth and red line indicates estimated pose</b></center>
+<br><br>
+<!-- Main Results Figure --> 
+
+
+1.Undistoritng image using camera calibration matrix. 
+2.Use feature detectors at the first loop to detect features 
+3.Tracking the detected features using optical flow. 
+4.Outliers are rejected using RANSAC.
+5.For motion detection essential matrix was calculated using two consecutive frames and decomposed to get rotation and translation. 
+6.Another feature detection is triggered it the number of features being followed falls beyond a certain number.
+7.For scaling, the ground truth was taken as a reference and reused the reference when another threshold was exceeded. 
+<div style="text-align: center;">
+<img style="height: 300px;" alt="" src="Calibmatrix.jpeg">
+</div>
+<center><b>The Calibration Matrix was taken from the KITTI dataset</b></center>
+<div style="text-align: center;">
+<img style="height: 300px;" alt="" src="Essential Matrix.png">
+</div>
+<center><b>Essential Matrix</b></center>
+<br><br>
+
+Challenges:
+<br><br>
+
+For the monocular camera approach, scaling from the pixel-level displacements to 3D coordinate displacements is a big issue. 
+It could be seen that for the optical flow approach if the features are detected over a moving object, that reduces the number of points to be tracked drastically. Which induces a sudden error at times. 
+<br><br>
+
+Big challenges: 
+<br><br>
+
+Dealing with such a vast dataset for the first time, where the camera calibration but the sensor suite need to be understood. 
+
+
+<h4>Stereo Vision Odometry using Optical Flow</h4>
+
+<div style="text-align: center;">
+<img style="height: 500px;" alt="" src="Flow of Stereo OF.png">
+</div>
+<center><b>Methodology of Stereo Vision Odometry using Optical Flow</b></center>
+<br><br>
+We are calculating Visual odometry of the Vehicle in the Kitti dataset on which stereo camera is mounted. The Kitti dataset contains the left and right image sequences taken from the stereo camera. We are finding the corresponding feature points in the left and right image. First the left image features are found. Disparity values between the left and right image pair is found with cv2.StereoSGBM_create. Then the corresponding right feature points are found by subtracting the disparity values with the left feature points. 
+<br><br>
+For detecting the features in the left images we are using FAST descriptor. The reason for choosing the FAST descriptor is because it is faster compared to other descriptors. The left image is split into tiles of smaller image and in those image tiles the feature points are detected. Finally the features points from all the tiles are combined together to get the total feature points of that image. This method is done because when using the FAST descriptor without splitting the images, the detected features points are not spread out throughout the image. Only in certain parts of the image the feature points are detected. Hence, a function is used to split the images into tiles to get feature points throughout the image. As mentioned before the corresponding right feature points are found by subtracting the disparity values with the left feature points.  
+<br><br>
+Then using triangulation we find the corresponding 3d points of those left and right image feature points. The function cv2.triangulatepoints is used for it. Using 6 random features points we find the transformation matrix using least_squares function from the scipy.optimise library by passing the 6 random left image feature points and 6 random right image feature points and their corresponding 3d points. For getting good transformation matrix a threshold value is used to filter out the bad transformation matrices. This threshold value is found by projecting the 3d points of the features points from the “T+1 th” image to the “T th” image and similarly projecting the 3d points from the “T th” image to the “T+1 th” image and subtracting those projected values with the already know values of the corresponding features points in the “T th” image and “T+1 th” image respectively. 
+<div style="text-align: center;">
+<img style="height: 300px;" alt="" src="FAST Features.png">
+</div>
+<center><b>FAST Features</b></center>
+<div style="text-align: center;">
+<img style="height: 350px;" alt="" src="tri.png">
+</div>
+<center><b>Triangulation to find World 3d points</b></center>
+<div style="text-align: center;">
+<img style="height: 350px;" alt="" src="reprojection.png">
+</div>
+<center><b>Image Reprojection</b></center>
+<br><br>
+We multiply the transformation matrix with the pose of the vehicle(the first pose value is taken from the ground truth value) to get the next pose and we update the transformation matrix and multiply it with the current pose to get the next pose and so on.
+<br><br>
+We multiply the transformation matrix with the pose of the vehicle(the first pose value is taken from the ground truth value) to get the next pose and we update the transformation matrix and multiply it with the current pose to get the next pose and so on.
+
+<h4>Monocular Visual Odometry using Deep learning</h4>
+Monocular Visual Odometry using Deep Learning has been implemented directly from [6]. We have not written that code. We have used this deep learning model to compare with our methods.
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 500px;" alt="" src="DL.jpeg">
+</div>
+<center><b>Deep Learning Model</b></center>
+
+<br><br>
+<!-- Results -->
+<h3>Experiments and results</h3>
+<div style="text-align: center;">
+<img style="height: 400px;" alt="" src="kitti.jpeg">
+</div>
+<center><b>The fully equipped vehicle</b></center>
+<div style="text-align: center;">
+<img style="height: 300px;" alt="" src="sensor setup.png">
+</div>
+<center><b>Sensor setup with respect to the vehicle</b></center>
+<br><br>
+Dataset:
+
+KITTI VO Dataset contains 22 driving sequences. Stereo image sequences are captured when the vehicle goes around local communities and highways.With the help of Velodyne laser scanner and GPS system the ground truth is given. But 11 sequences with ground truth are publicly accessible. Sequences 11 to 21 are allocated for test and ranking of various Visual Odometry algorithms.
+<br><br>
+
+<h4>Monocular Visual Odometry using Optical Flow</h4>
+An important parameter which affects the estimated pose is minimum number of features to be tracked in optical flow. If the number of features to be tracked is low it gives less precision and accuracy and if the number of features to be tracked is high it gives higher precision but becomes computationally expensive.
+
+<h4>Stereo Visual Odometry using Optical Flow</h4>
+The error between the calculated path and the ground truth values is calculated and is shown in the output graph. This error is also separately plotted on another graph. The error value which is calculated is the accumulated error values throughout the calculated path. 
+
+<br><br>
+
+Important Parameters which affect the results are 1) number of random features points in line 161 in the function def calculatepose, 2) max_error in the function def trackkeypoints, 3) max_iter in the function def calculatepose, 4) threshold in def calculatepose.
+
+<br><br>
+
+Max_iter :	Increasing the value of max_iter slightly affects the execution time of the code. After running the code for 4 different parameter values such as 100, 10, 500, 2000 only for the 500 value it shows greater error compared to other values.
+
+<br><br>
+
+max_error :
+
+When giving different values to max_error the execution time is not affected at all. The output error from the function cv2.calcOpticalFlowPyrLK gives a lesser value if the feature points are tracked correctly and a greater value if the feature points are not tracked correctly. The tracked features points which have error values higher than max_error are excluded. The values that were used for max_error are 4, 10, 3, 20, 6, 8 and out of them 20 increases the error output significantly.
+
+<br><br>
+
+threshold :
+
+The execution time is not affected by changing the threshold value. By using the values 5,3,7,10,15 and 25 for threshold variable the error value does not have a significant change.
+
+<br><br>
+
+Number of random variables :
+
+The execution time is not affected when changing the number of random variables. The number of random variables was set to different values such as 6, 10 and 3 in which the value 10 gave a higher error than 6 and 3. Therefore using more random variables was not useful.
+
+<h4>Monocular Visual Odometry using Deep Learning</h4>
+
+The important parameters which affect the results when performing Monocular Visual Odometry using Deep Learning are Learning rate and Batch size.
+<br><br>
+
+Learning rate - A higher learning rate takes less computational time but does not reduce the error below a certain value on the other hand for a smaller learning rate a lower error value can be reached at the cost of higher computation. Future work may include implementation of decaying learning rate approach.
+<br><br>
+
+Batch size - If the batch size is bigger the features detected by the convolutional neural networks are more general than a smaller batch size making it less sensitive for the predictions in different environments.
+
+
+<h3>Qualitative Results</h3>
+
+<h4>Stereo Visual Odometry using Optical Flow</h4>
+<center><b>Output for the 1st dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 1.png">
+</div>
+
+<center><b>Output for the 2nd dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 2.png">
+</div>
+<center><b>Output for the 3rd dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 3.png">
+</div>
+<center><b>Output for the 4th dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 4.png">
+</div>
+<center><b>Output for the 5th dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 5.png">
+</div>
+<center><b>Output for the 6th dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 6.png">
+</div>
+<center><b>Output for the 7th dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 7.png">
+</div>
+<center><b>Output for the 8th dataset: ( The pose estimation was not as accurate as the previous results - failure case)</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="Dataset 8.png">
+</div>
+
+<h4>Monocular Visual Odometry using Optical Flow</h4>
+<h4>In the output graphs below the green line indicates the ground truth and the red line indicates the estimated path</h4>
+
+<center><b>Output for the 1st dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="2.jpeg">
+</div>
+
+<center><b>Output for the 2nd dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="5.jpeg">
+</div>
+<center><b>Output for the 3rd dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="4.jpeg">
+</div>
+<h4>For the 4th and 5th dataset, the estimated path is not as accurate it is due to moving object shadows, scale error and sudden or abrupt turns of the vehicle</h4>
+
+<center><b>Output for the 4th dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="1.jpeg">
+</div>
+
+<center><b>Output for the 5th dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="3.jpeg">
+</div>
+
+
+
+<h4>Monocular Visual Odometry using Deep learning</h4>
+
+<center><b>Output for the 1st dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="img1.jpeg">
+</div>
+<center><b>Output for the 2nd dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="img2.jpeg">
+</div>
+<center><b>Output for the 3rd dataset:</b></center>
+
+<!-- Main Results Figure --> 
+<div style="text-align: center;">
+<img style="height: 450px;" alt="" src="img3.jpeg">
+</div>
+
+
+<h3>Conclusion</h3>
+
+The Stereo VO proves to be better than Monocular VO since it has drawbacks like scale ambiguity, lack of depth information. Out of the 4 methods, Monocular VO using Optical flow and Feature Tracking and Stereo VO using Optical Flow and Feature Tracking the Optical Flow methods proved to be more accurate. But compared to these methods, the Visual Odometry using Deep Learning model proved to be superior in accuracy. The Stereo VO using Deep Learning can be a better option as it combines the advantages of the Stereo VO and the Deep Learning model.
+<h3>References</h3>
+
+1.https://www.cvlibs.net/datasets/kitti/index.php
+<br><br>
+2.https://cgarg92.github.io/Stereo-visual-odometry/
+<br><br>
+3.https://www.mdpi.com/2076-3417/13/10/5842
+<br><br>
+4.https://github.com/fshamshirdar/DeepVO
+<br><br>
+5.https://df-vo.readthedocs.io/en/latest/rsts/examples.html
+<br><br>
+6.https://github.com/ChiWeiHsiao/DeepVO-pytorch/blob/master/Readme.md
+
+
+
+
+
+
+
+  <hr>
+  <footer> 
+  <p>© Rutvik Dagadkhair, Rakesh Omprakash</p>
+  </footer>
+</div>
+</div>
+
+<br><br>
+
+</body></html>
